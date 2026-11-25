@@ -25,6 +25,11 @@ def main() -> None:
     # and its default encoding.
     with open(path, "wb") as f:
         f.write(TEXT.encode("utf-8"))
+    # Verify-after-write guard: read the file back and fail loudly if the
+    # bytes on disk are not exactly the entry text we intended to write.
+    with open(path, "rb") as f:
+        if f.read() != TEXT.encode("utf-8"):
+            raise RuntimeError(f"entry.txt mismatch after write: {path}")
 
 if __name__ == "__main__":
     main()
